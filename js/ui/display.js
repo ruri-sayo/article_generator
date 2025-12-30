@@ -16,14 +16,10 @@ function formatNumber(value) {
         return '0';
     }
 
-    // 1,000未満: そのまま表示
-    if (decimal.lt(1000)) {
-        return decimal.toNumber().toFixed(0);
-    }
-
-    // 1,000〜999,999: カンマ区切り
+    // 1,000,000未満: 整数表示（カンマ区切り）
+    // ユーザー要望: 常に整数表示、1000を超えても小数は出さない
     if (decimal.lt(1e6)) {
-        return decimal.toNumber().toLocaleString('ja-JP');
+        return Math.floor(decimal.toNumber()).toLocaleString('ja-JP');
     }
 
     // 10^6以上: 科学的記数法
