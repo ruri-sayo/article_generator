@@ -118,7 +118,7 @@ class BuildingsManager {
             <div class="building-stats">
                 <span class="building-cps">+${formatNumber(building.baseCps)}/s</span>
                 <span class="building-cost ${canAfford ? 'affordable' : 'expensive'}">
-                    💰 ${formatNumber(cost)}
+                    📄 ${formatNumber(cost)}
                 </span>
             </div>
         `;
@@ -195,11 +195,18 @@ class BuildingsManager {
                 ownedSpan.textContent = building.owned;
             }
 
+            // CpSの更新 (アップグレード反映)
+            const cpsSpan = card.querySelector('.building-cps');
+            if (cpsSpan) {
+                const cps = building.getCps(game ? game.getUpgradeMultiplier(building.id) : 1);
+                cpsSpan.textContent = `+${formatNumber(cps)}/s`;
+            }
+
             // コストの更新
             const costSpan = card.querySelector('.building-cost');
             if (costSpan) {
                 const cost = building.getCurrentCost();
-                costSpan.textContent = '💰 ' + formatNumber(cost);
+                costSpan.textContent = '📄 ' + formatNumber(cost);
                 costSpan.classList.toggle('affordable', canAfford);
                 costSpan.classList.toggle('expensive', !canAfford);
             }

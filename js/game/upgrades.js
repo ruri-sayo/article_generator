@@ -189,7 +189,7 @@ class UpgradesManager {
             <div class="upgrade-flavor">${upgrade.flavorText}</div>
             <div class="upgrade-meta">
                 <span class="upgrade-building">${buildingName}</span>
-                <span class="upgrade-cost">💰 ${formatNumber(upgrade.getCost())}</span>
+                <span class="upgrade-cost">📄 ${formatNumber(upgrade.getCost())}</span>
             </div>
         `;
 
@@ -216,6 +216,11 @@ class UpgradesManager {
             );
 
             this.renderUpgrades();
+
+            // 施設のCpS表示を更新
+            if (typeof buildingsManager !== 'undefined') {
+                buildingsManager.updateDisplay();
+            }
 
             // 座禅システムに通知
             if (typeof zenSystem !== 'undefined') {
@@ -251,7 +256,7 @@ class UpgradesManager {
             // コストの更新
             const costSpan = card.querySelector('.upgrade-cost');
             if (costSpan) {
-                costSpan.textContent = '💰 ' + formatNumber(upgrade.getCost());
+                costSpan.textContent = '📄 ' + formatNumber(upgrade.getCost());
             }
         });
     }

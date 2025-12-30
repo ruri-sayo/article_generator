@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article Generator - 記事生成クリッカー</title>
     <meta name="description" content="記事を生成し、悟りを目指すクリッカーゲーム。仏教観の現代的解釈をゲーム体験を通じて提示する。">
-    
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/ui.css">
     <link rel="stylesheet" href="css/animations.css">
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <!-- ヘッダー: 統計情報表示 -->
     <header id="game-header">
@@ -39,6 +43,19 @@
                     <span class="stat-label">得</span>
                     <span id="toku-count" class="stat-value">0</span>
                 </div>
+                <!-- ハンバーガーメニュー -->
+                <div class="hamburger-menu">
+                    <button id="hamburger-btn" class="hamburger-btn" aria-label="メニュー">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </button>
+                    <div id="hamburger-dropdown" class="hamburger-dropdown">
+                        <button id="menu-save" class="dropdown-item">💾 保存</button>
+                        <button id="menu-stats" class="dropdown-item">📊 統計</button>
+                        <button id="menu-settings" class="dropdown-item">⚙️ 設定</button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -55,17 +72,11 @@
         </aside>
 
         <!-- 中央エリア: クリック対象 -->
-        <section id="click-area">
+        <section id="click-area" class="mobile-tab-content active">
             <div id="click-target" role="button" tabindex="0" aria-label="記事を生成する">
                 <div class="monitor">
                     <div class="monitor-screen">
-                        <div class="screen-content">
-                            <div class="code-line"></div>
-                            <div class="code-line short"></div>
-                            <div class="code-line"></div>
-                            <div class="code-line medium"></div>
-                            <div class="code-line short"></div>
-                        </div>
+                        <div id="code-display" class="code-display"></div>
                     </div>
                     <div class="monitor-stand"></div>
                 </div>
@@ -100,14 +111,41 @@
         </aside>
     </main>
 
-    <!-- フッター -->
+    <!-- モバイル用ナビゲーション -->
+    <nav id="mobile-nav">
+        <button class="nav-btn active" data-target="click-area">
+            <span class="nav-icon">⌨️</span>
+            <span class="nav-label">作成</span>
+        </button>
+        <button class="nav-btn" data-target="buildings-panel">
+            <span class="nav-icon">🏢</span>
+            <span class="nav-label">施設</span>
+        </button>
+        <button class="nav-btn" data-target="upgrades-panel">
+            <span class="nav-icon">⚡</span>
+            <span class="nav-label">強化</span>
+        </button>
+        <button class="nav-btn" id="mobile-settings-btn">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">設定</span>
+        </button>
+    </nav>
+
+    <!-- フッター (PC用) -->
     <footer id="game-footer">
         <div class="footer-content">
-            <button id="save-button" class="footer-btn">💾 保存</button>
             <button id="prestige-button" class="footer-btn prestige" style="display: none;">🌟 悟り</button>
             <span id="auto-save-indicator">自動保存: 有効</span>
         </div>
     </footer>
+
+    <!-- フレーバーテキストティッカー -->
+    <div id="flavor-ticker" class="flavor-ticker">
+        <div class="ticker-content">
+            <span class="ticker-icon">🪷</span>
+            <span id="flavor-content">システム起動中...</span>
+        </div>
+    </div>
 
     <!-- モーダル: 転生確認 -->
     <div id="prestige-modal" class="modal" style="display: none;">
@@ -123,6 +161,59 @@
             <div class="modal-buttons">
                 <button id="prestige-confirm" class="btn-primary">転生する</button>
                 <button id="prestige-cancel" class="btn-secondary">キャンセル</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル: 統計 -->
+    <div id="stats-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>プレイ統計</h2>
+            <div class="modal-body">
+                <div class="stat-row"><span>総生成記事数:</span> <span id="stat-total-articles" class="stat-val">0</span>
+                </div>
+                <div class="stat-row"><span>現在のCpS:</span> <span id="stat-current-cps" class="stat-val">0</span></div>
+                <div class="stat-row"><span>累計クリック数:</span> <span id="stat-total-clicks" class="stat-val">0</span></div>
+                <div class="stat-row"><span>プレイ時間:</span> <span id="stat-play-time" class="stat-val">0時間 0分 0秒</span>
+                </div>
+                <div class="stat-row"><span>転生回数:</span> <span id="stat-prestige-count" class="stat-val">0</span></div>
+                <div class="stat-row"><span>座禅完了回数:</span> <span id="stat-total-zen" class="stat-val">0</span></div>
+            </div>
+            <div class="modal-buttons">
+                <button id="stats-close" class="btn-secondary">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル: 設定 -->
+    <div id="settings-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>設定</h2>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <div class="setting-row">
+                        <span class="setting-label">パーティクル演出</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="setting-particles" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <p class="setting-desc">クリック時や購入時のエフェクトを表示します（軽量化にはOFF推奨）</p>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-row">
+                        <span class="setting-label">サウンド（未実装）</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="setting-sound" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <hr>
+                <button id="settings-reset-save" class="btn-danger">進行状況をリセット</button>
+            </div>
+            <div class="modal-buttons">
+                <button id="settings-close" class="btn-secondary">閉じる</button>
             </div>
         </div>
     </div>
@@ -156,6 +247,12 @@
     <script src="js/ui/display.js"></script>
     <script src="js/ui/modal.js"></script>
     <script src="js/ui/notifications.js"></script>
+    <script src="js/ui/settings.js"></script>
+    <script src="js/ui/stats.js"></script>
+    <script src="js/ui/ticker.js"></script>
+    <script src="js/ui/hamburger.js"></script>
+    <script src="js/ui/mobile.js"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

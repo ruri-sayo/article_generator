@@ -8,27 +8,27 @@
 const CONSTANTS = {
     // ゲームバージョン
     VERSION: '1.0.0',
-    
+
     // セーブ関連
     SAVE_KEY: 'article_generator_save',
     AUTO_SAVE_INTERVAL: 30000, // 30秒ごとに自動保存
-    
+
     // ゲームループ
     TICK_RATE: 60, // FPS
-    
+
     // 転生条件
     PRESTIGE_THRESHOLD: 1e14, // 100兆
-    
+
     // 座禅システム
-    ZEN_START_TIME: 60, // 無操作60秒で座禅開始
+    ZEN_START_TIME: 30, // 無操作30秒で座禅準備（カウントダウン）開始
     ZEN_COMPLETE_TIME: 3600, // 1時間で座禅完了
-    
+
     // オフライン報酬
     OFFLINE_MAX_TIME_DEFAULT: 86400, // 24時間（秒）
     OFFLINE_MAX_TIME_NIRVANA: 259200, // 72時間（秒）
     OFFLINE_EFFICIENCY_DEFAULT: 0.5, // 50%
     OFFLINE_EFFICIENCY_NIRVANA: 1.0, // 100%
-    
+
     // 施設コスト上昇率
     BUILDING_COST_MULTIPLIER: 1.15,
     BUILDING_COST_MULTIPLIER_REDUCED: 1.14, // 「色即是空」適用後

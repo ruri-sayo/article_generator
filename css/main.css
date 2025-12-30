@@ -4,39 +4,43 @@
 
 /* CSS変数定義 */
 :root {
-    /* カラーパレット */
-    --bg-primary: #1a1a2e;
-    --bg-secondary: #16213e;
-    --bg-tertiary: #0f3460;
-    --bg-card: #1f2937;
-    
-    --text-primary: #e5e7eb;
-    --text-secondary: #9ca3af;
-    --text-muted: #6b7280;
-    
-    --accent-primary: #4f46e5;
-    --accent-secondary: #7c3aed;
-    --accent-success: #10b981;
-    --accent-warning: #f59e0b;
-    --accent-danger: #ef4444;
-    
+    /* カラーパレット (Buddhist Cyberpunk Theme) */
+    --bg-primary: #050505;
+    /* 漆黒 */
+    --bg-secondary: #121212;
+    /* 墨色 */
+    --bg-tertiary: #1f1f1f;
+    --bg-card: #1a1a1a;
+
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0a0;
+    --text-muted: #666666;
+
+    --accent-primary: #c5a059;
+    /* 黄金色 */
+    --accent-secondary: #e06377;
+    /* 蓮色 */
+    --accent-success: #2e8b57;
+    --accent-warning: #d2691e;
+    --accent-danger: #8b0000;
+
     --gold: #ffd700;
     --silver: #c0c0c0;
-    
+
     /* フォント */
     --font-primary: 'Noto Sans JP', sans-serif;
     --font-display: 'Noto Serif JP', serif;
-    
+
     /* サイズ */
     --header-height: 80px;
     --footer-height: 50px;
     --sidebar-width: 280px;
-    
+
     /* アニメーション */
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
-    
+
     /* シャドウ */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
@@ -45,7 +49,9 @@
 }
 
 /* リセット & ベース */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -149,6 +155,90 @@ body {
     min-height: 100vh;
 }
 
+/* レスポンシブ対応 (モバイル) */
+@media (max-width: 768px) {
+    :root {
+        --header-height: 60px;
+        --sidebar-width: 100%;
+        --footer-height: 0px;
+        /* モバイルnavに置き換え */
+    }
+
+    #game-main {
+        display: block;
+        /* Grid解除 */
+        padding: calc(var(--header-height) + 1rem) 1rem 80px 1rem;
+        /* 下部はNav分空ける */
+        min-height: calc(100vh - 60px);
+    }
+
+    .side-panel {
+        max-height: none;
+        /* コンテンツに応じて伸ばす */
+        height: auto;
+        display: none;
+        /* デフォルト非表示、active-tabで表示 */
+    }
+
+    #click-area {
+        display: none;
+    }
+
+    /* .active-tab クラスがついている要素を表示 */
+    .active-tab {
+        display: flex !important;
+        /* side-panelはblockだがclick-areaはflex */
+        flex-direction: column;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .side-panel.active-tab {
+        display: block !important;
+    }
+
+    #game-footer {
+        display: none;
+        /* PC用フッター非表示 */
+        /* 設定ボタンなどはSettings Modal内やHeaderに移動する必要あり?
+           現状のindex.html構造だと、Footer内のボタンが押せなくなる。
+           対策: Mobile Navに「設定」ボタンを追加したので、そこからアクセス可能。
+           「保存」ボタンはSettings Modal内には無いが、AutoSaveがある＆ページ離脱時保存がある。
+           また、ハンバーガーメニュー等に退避するのがベターだが、
+           今回はSettings内に「保存して終了」を作るか、
+           あるいはSettings Modalが開けばSaveボタンも押せるとみなす。
+         */
+    }
+
+    #mobile-nav {
+        display: flex;
+        /* UI.cssで定義したもののオーバーライド確認 */
+    }
+
+    /* 転生ボタンはモバイルではどこに出す？
+       設定画面内か、条件達成時に自動でポップアップ、あるいは通知領域に出す手もある。
+       または、Headerに小さく出す。
+     */
+    #prestige-button.prestige {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        z-index: 800;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* サイドパネル共通 */
 .side-panel {
     background: rgba(31, 41, 55, 0.8);
@@ -230,7 +320,7 @@ body {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     border-radius: 12px;
     border: 6px solid #374151;
-    box-shadow: 
+    box-shadow:
         inset 0 0 30px rgba(0, 0, 0, 0.5),
         var(--shadow-lg),
         0 0 30px rgba(79, 70, 229, 0.2);
@@ -403,4 +493,179 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
+}
+
+/* フレーバーテキストティッカー */
+.flavor-ticker {
+    position: fixed;
+    top: calc(var(--header-height));
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+}
+
+.ticker-content {
+    white-space: nowrap;
+    padding-left: 100%;
+    /* 右端から開始 */
+    animation: tickerScroll 20s linear infinite;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-family: var(--font-display);
+}
+
+.ticker-icon {
+    margin-right: 0.5rem;
+    color: var(--accent-secondary);
+}
+
+@keyframes tickerScroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+
+    /* これだと要素の幅分しか動かない */
+}
+
+/* 実際にはJSでタイプライター風にするため、tickerScrollアニメーションは使わず、
+   JSでの制御に任せるか、あるいは単純な marquee にするか。
+   今回は FlavorTicker クラスでタイプライター実装しているので、以下のように修正 */
+
+.flavor-ticker {
+    justify-content: center;
+    /* 中央寄せ */
+}
+
+.ticker-content {
+    padding-left: 0;
+    animation: none;
+    width: 100%;
+    justify-content: center;
+}
+
+/* 統計モーダル */
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-val {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+/* ハンバーガーメニュー */
+.hamburger-menu {
+    position: relative;
+    margin-left: 1rem;
+}
+
+.hamburger-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    transition: all var(--transition-fast);
+}
+
+.hamburger-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.hamburger-btn.active {
+    background: var(--accent-primary);
+}
+
+.hamburger-line {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all var(--transition-fast);
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+.hamburger-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 150px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all var(--transition-normal);
+    z-index: 200;
+}
+
+.hamburger-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-item:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }

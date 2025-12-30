@@ -113,13 +113,70 @@ class GameCore {
         this.addArticles(clickPower);
         this.clickCount++;
 
-        // クリックエフェクト表示
-        this.showClickEffect(e, clickPower);
+        // クリックエフェクト表示 (設定でONの場合のみ)
+        if (typeof settingsManager === 'undefined' || settingsManager.isParticlesEnabled()) {
+            this.showClickEffect(e, clickPower);
+        }
+
+        // 般若心経コード表示更新
+        this.updateCodeDisplay();
 
         // 座禅システムに通知
         if (typeof zenSystem !== 'undefined') {
             zenSystem.onUserAction();
         }
+    }
+
+    /**
+     * 般若心経コードの表示更新
+     */
+    updateCodeDisplay() {
+        const display = document.getElementById('code-display');
+        if (!display) return;
+
+        // 般若心経テキスト
+        const sutra = "観自在菩薩行深般若波羅蜜多時照見五蘊皆空度一切苦厄舎利子色不異空空不異色色即是空空即是色受想行識亦復如是舎利子是諸法空相不生不滅不垢不浄不増不減是故空中無色無受想行識無眼耳鼻舌身意無色声香味触法無眼界乃至無意識界無無明亦無無明尽乃至無老死亦無老死尽無苦集滅道無智亦無得以無所得故菩提薩埵依般若波羅蜜多故心無罣礙無罣礙故無有恐怖遠離一切顛倒夢想究竟涅槃三世諸仏依般若波羅蜜多故得阿耨多羅三藐三菩提故知般若波羅蜜多是大神呪是大明呪是無上呪是無等等呪能除一切苦真実不虚故説般若波羅蜜多呪即説呪曰羯諦羯諦波羅羯諦波羅僧羯諦菩提薩婆訶般若心経";
+
+        // 現在の進行度（クリック数）に合わせて文字を取得
+        // クリックごとに2〜5文字進む
+        const charsToAdd = 3;
+
+        // セッション内の進行度を保持する必要があるが、簡易的に総クリック数を使う
+        // テキストがいっぱいになったら古いものを消す（スクロール）
+
+        if (!this.sutraIndex) this.sutraIndex = 0;
+
+        const nextIndex = (this.sutraIndex + charsToAdd) % sutra.length;
+        let textChunk = "";
+
+        if (nextIndex > this.sutraIndex) {
+            textChunk = sutra.substring(this.sutraIndex, nextIndex);
+        } else {
+            textChunk = sutra.substring(this.sutraIndex) + sutra.substring(0, nextIndex);
+        }
+
+        this.sutraIndex = nextIndex;
+
+        // spanでラップして追加（フェードインアニメ用）
+        const span = document.createElement('span');
+        span.textContent = textChunk;
+        span.style.animation = 'fadeIn 0.5s ease';
+        display.appendChild(span);
+
+        // 要素が増えすぎたら削除
+        if (display.children.length > 20) {
+            display.removeChild(display.firstChild);
+        }
+
+        // 自動スクロール（縦書きなので左へスクロールするのが正しいが、flex-direction: columnなら下へ）
+        // CSSで writing-mode: vertical-rl を指定しているため、
+        // 要素は右から左へ並ぶ... はずだが flex-direction 次第。
+        // CSS実装では flex-direction: column; align-items: flex-start; とした。
+        // vertical-rl の場合、column方向は「右から左」になるはず...? 
+        // いや、vertical-rl の主軸は「上から下」、交差軸が「右から左」。
+        // flex-direction: column だと主軸（上から下）に並ぶ。
+        // なので、行の下に追加されていく形。
+        display.scrollTop = display.scrollHeight; // 念のため
     }
 
     /**

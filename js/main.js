@@ -12,6 +12,14 @@ function initGame() {
     // グローバルインスタンスの初期化
     notificationManager = new NotificationManager();
     modalManager = new ModalManager();
+    settingsManager = new SettingsManager();
+    settingsManager.init();
+    statsManager = new StatsManager();
+    statsManager.init();
+    flavorTicker = new FlavorTicker();
+    flavorTicker.init();
+    hamburgerMenu = new HamburgerMenu();
+    hamburgerMenu.init();
     pvDisplay = new PVDisplay();
 
     // ゲームコアの初期化

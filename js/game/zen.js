@@ -12,6 +12,8 @@ class ZenSystem {
         this.zenProgress = 0; // 秒単位
         this.isVisible = true;
         this.isZenActive = false;
+        this.isCountingDown = false;
+        this.countdownTime = 0;
 
         this.modal = document.getElementById('zen-gauge-modal');
         this.progressFill = document.getElementById('zen-progress');
@@ -74,6 +76,8 @@ class ZenSystem {
         this.zenStartTime = null;
         this.zenProgress = 0;
         this.isZenActive = false;
+        this.isCountingDown = false;
+        this.countdownTime = 0;
         this.hideZenGauge();
     }
 
@@ -108,6 +112,33 @@ class ZenSystem {
     /**
      * 更新処理（1秒ごとに呼ばれる）
      */
+    updateZenGauge() {
+        if (this.isCountingDown) {
+            // カウントダウン中の表示
+            if (this.modal) this.modal.style.display = 'flex';
+            if (this.progressFill) this.progressFill.style.width = '100%';
+            if (this.timeDisplay) {
+                const remaining = Math.ceil(this.countdownTime);
+                this.timeDisplay.textContent = `座禅開始まで: ${remaining}秒...`;
+            }
+            return;
+        }
+
+        if (this.progressFill) {
+            const progress = (this.zenProgress / CONSTANTS.ZEN_COMPLETE_TIME) * 100;
+            this.progressFill.style.width = `${Math.min(100, progress)}%`;
+        }
+
+        if (this.timeDisplay) {
+            const current = this.formatTime(this.zenProgress);
+            const total = this.formatTime(CONSTANTS.ZEN_COMPLETE_TIME);
+            this.timeDisplay.textContent = `${current} / ${total}`;
+        }
+    }
+
+    /**
+     * 更新処理（1秒ごとに呼ばれる）
+     */
     update() {
         // タブが非表示の場合は更新しない
         if (!this.isVisible) return;
@@ -115,23 +146,39 @@ class ZenSystem {
         const now = Date.now();
         const elapsedSinceAction = (now - this.lastActionTime) / 1000;
 
-        // 1分以上無操作で座禅開始
-        if (elapsedSinceAction >= CONSTANTS.ZEN_START_TIME) {
-            if (!this.isZenActive) {
+        // 30秒以上無操作でカウントダウン開始
+        if (elapsedSinceAction >= CONSTANTS.ZEN_START_TIME && !this.isZenActive && !this.isCountingDown) {
+            this.startCountdown();
+        }
+
+        // カウントダウン処理
+        if (this.isCountingDown) {
+            this.countdownTime -= 1; // 1秒ティックごとに減らす（概算）
+            this.updateZenGauge();
+
+            if (this.countdownTime <= 0) {
+                this.isCountingDown = false;
                 this.startZen();
             }
+            return;
+        }
 
-            // 座禅開始からの経過時間を計算
-            if (this.zenStartTime) {
-                this.zenProgress = (now - this.zenStartTime) / 1000;
-                this.updateZenGauge();
+        // 座禅中の処理
+        if (this.isZenActive && this.zenStartTime) {
+            this.zenProgress = (now - this.zenStartTime) / 1000;
+            this.updateZenGauge();
 
-                // 1時間達成で座禅完了
-                if (this.zenProgress >= CONSTANTS.ZEN_COMPLETE_TIME) {
-                    this.completeZen();
-                }
+            // 1時間達成で座禅完了
+            if (this.zenProgress >= CONSTANTS.ZEN_COMPLETE_TIME) {
+                this.completeZen();
             }
         }
+    }
+
+    startCountdown() {
+        this.isCountingDown = true;
+        this.countdownTime = 5; // 5秒の猶予
+        this.showZenGauge();
     }
 
     /**
@@ -141,7 +188,6 @@ class ZenSystem {
         this.isZenActive = true;
         this.zenStartTime = Date.now();
         this.showZenGauge();
-
         console.log('座禅を開始しました');
     }
 
@@ -186,22 +232,6 @@ class ZenSystem {
     hideZenGauge() {
         if (this.modal) {
             this.modal.style.display = 'none';
-        }
-    }
-
-    /**
-     * 座禅ゲージの更新
-     */
-    updateZenGauge() {
-        if (this.progressFill) {
-            const progress = (this.zenProgress / CONSTANTS.ZEN_COMPLETE_TIME) * 100;
-            this.progressFill.style.width = `${Math.min(100, progress)}%`;
-        }
-
-        if (this.timeDisplay) {
-            const current = this.formatTime(this.zenProgress);
-            const total = this.formatTime(CONSTANTS.ZEN_COMPLETE_TIME);
-            this.timeDisplay.textContent = `${current} / ${total}`;
         }
     }
 
