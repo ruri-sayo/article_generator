@@ -1,0 +1,433 @@
+/* ============================================
+   Article Generator - UIコンポーネントスタイル
+   ============================================ */
+
+/* 施設カード */
+.building-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.building-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-primary);
+    transform: translateX(4px);
+}
+
+.building-card.affordable {
+    border-color: var(--accent-success);
+}
+
+.building-card.affordable:hover {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.building-card.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.building-card.locked:hover {
+    transform: none;
+}
+
+.building-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.building-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.building-owned {
+    font-size: 0.75rem;
+    color: var(--accent-primary);
+    background: rgba(79, 70, 229, 0.2);
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+}
+
+.building-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.building-cps {
+    color: var(--accent-success);
+}
+
+.building-cost {
+    color: var(--accent-warning);
+}
+
+.building-cost.affordable {
+    color: var(--accent-success);
+}
+
+.building-cost.expensive {
+    color: var(--accent-danger);
+}
+
+/* アップグレードカード */
+.upgrade-card {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 8px;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.upgrade-card:hover {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.2) 0%, rgba(124, 58, 237, 0.2) 100%);
+    border-color: var(--accent-primary);
+    transform: translateX(-4px);
+}
+
+.upgrade-card.affordable {
+    border-color: var(--accent-success);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+}
+
+.upgrade-card.purchased {
+    opacity: 0.5;
+    cursor: default;
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.upgrade-card.purchased:hover {
+    transform: none;
+}
+
+.upgrade-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.upgrade-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.upgrade-effect {
+    font-size: 0.7rem;
+    color: var(--accent-success);
+    background: rgba(16, 185, 129, 0.2);
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+}
+
+.upgrade-flavor {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+.upgrade-cost {
+    font-size: 0.75rem;
+    color: var(--accent-warning);
+}
+
+/* モーダル共通 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.modal-content h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-body {
+    margin-bottom: 1.5rem;
+}
+
+.modal-body p {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.modal-body .warning {
+    color: var(--accent-danger);
+    font-size: 0.875rem;
+}
+
+.modal-body .info {
+    color: var(--accent-success);
+    font-size: 0.875rem;
+}
+
+.modal-body hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 1rem 0;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border: none;
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(79, 70, 229, 0.5);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-secondary);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* 座禅モーダル */
+.zen-modal .zen-modal-content {
+    background: linear-gradient(135deg, #2d1f1f 0%, #1a1210 100%);
+    border: 3px solid #8b7355;
+    border-radius: 4px;
+    padding: 2rem 3rem;
+    text-align: center;
+    box-shadow:
+        0 0 0 1px #5c4a3d,
+        0 0 30px rgba(139, 115, 85, 0.3);
+}
+
+.zen-modal-content h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: #d4c4a8;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.zen-progress-bar {
+    width: 100%;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    border: 2px solid #5c4a3d;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.zen-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #8b7355 0%, #d4c4a8 50%, #8b7355 100%);
+    transition: width 1s linear;
+}
+
+#zen-time-display {
+    font-size: 0.875rem;
+    color: #8b7355;
+    font-family: monospace;
+}
+
+/* 喝！表示 */
+.katsu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 120px;
+    font-weight: 900;
+    color: #ff0000;
+    font-family: var(--font-display);
+    z-index: 9999;
+    text-shadow:
+        4px 4px 0 #800000,
+        8px 8px 20px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+}
+
+/* 通知 */
+#notification-area {
+    position: fixed;
+    top: calc(var(--header-height) + 1rem);
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 500;
+    pointer-events: none;
+}
+
+.notification {
+    background: rgba(31, 41, 55, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    min-width: 250px;
+    max-width: 350px;
+    box-shadow: var(--shadow-md);
+    pointer-events: auto;
+    animation: slideInRight 0.3s ease-out;
+}
+
+.notification.success {
+    border-left: 3px solid var(--accent-success);
+}
+
+.notification.warning {
+    border-left: 3px solid var(--accent-warning);
+}
+
+.notification.error {
+    border-left: 3px solid var(--accent-danger);
+}
+
+.notification.info {
+    border-left: 3px solid var(--accent-primary);
+}
+
+.notification-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.notification-message {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* クリックエフェクト */
+.click-particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    text-shadow: 0 0 10px var(--accent-primary);
+    z-index: 200;
+    animation: floatUp 1s ease-out forwards;
+}
+
+/* 永続アップグレードカード */
+.prestige-upgrade-card {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(184, 134, 11, 0.1) 100%);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.prestige-upgrade-card:hover {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(184, 134, 11, 0.2) 100%);
+    border-color: var(--gold);
+}
+
+.prestige-upgrade-card.purchased {
+    opacity: 0.5;
+    cursor: default;
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.prestige-upgrade-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 0.25rem;
+}
+
+.prestige-upgrade-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.prestige-upgrade-cost {
+    font-size: 0.75rem;
+    color: var(--gold);
+}
+
+/* ツールチップ */
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 0.75rem;
+    max-width: 250px;
+    z-index: 600;
+    pointer-events: none;
+    font-size: 0.75rem;
+    box-shadow: var(--shadow-lg);
+}
+
+.tooltip-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.tooltip-desc {
+    color: var(--text-secondary);
+}

@@ -1,0 +1,297 @@
+/* ============================================
+   Article Generator - アニメーション定義
+   ============================================ */
+
+/* コードラインのパルスアニメーション */
+@keyframes codePulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scaleX(1);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: scaleX(1.02);
+    }
+}
+
+/* 通知スライドイン */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 通知スライドアウト */
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+
+/* クリックパーティクル浮き上がり */
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-80px) scale(0.5);
+    }
+}
+
+/* 喝！フェードアウト */
+@keyframes katsuFade {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+}
+
+/* モーダルフェードイン */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* モーダルコンテンツスケールイン */
+@keyframes modalScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* パルスグロー（購入可能表示） */
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+    }
+}
+
+/* シェイク（エラー時） */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-5px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* ボウンス（獲得時） */
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* スピン（ローディング） */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 悟りオーラ */
+@keyframes enlightenmentGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 50px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 215, 0, 0.3);
+    }
+}
+
+/* 座禅プログレスシマー */
+@keyframes zenShimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* 数値カウントアップ */
+@keyframes countUp {
+    0% {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* 施設購入フラッシュ */
+@keyframes purchaseFlash {
+    0% {
+        background: rgba(16, 185, 129, 0.3);
+    }
+
+    100% {
+        background: transparent;
+    }
+}
+
+/* クリックリップル */
+@keyframes clickRipple {
+    0% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* アップグレード解放 */
+@keyframes unlockPop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* アニメーションユーティリティクラス */
+.animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+.animate-bounce {
+    animation: bounce 0.3s ease-out;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.animate-enlightenment {
+    animation: enlightenmentGlow 3s ease-in-out infinite;
+}
+
+.animate-unlock {
+    animation: unlockPop 0.5s ease-out;
+}
+
+.animate-purchase-flash {
+    animation: purchaseFlash 0.5s ease-out;
+}
+
+/* 喝！表示用のスタイル追加 */
+.katsu.active {
+    display: block !important;
+    animation: katsuFade 5s ease-out forwards;
+}
+
+/* モーダル表示アニメーション */
+.modal.active {
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal.active .modal-content {
+    animation: modalScaleIn 0.3s ease-out;
+}
+
+/* 座禅プログレスバーのシマー効果 */
+.zen-progress-fill {
+    background: linear-gradient(90deg,
+            #8b7355 0%,
+            #d4c4a8 25%,
+            #8b7355 50%,
+            #d4c4a8 75%,
+            #8b7355 100%);
+    background-size: 200% 100%;
+    animation: zenShimmer 2s linear infinite;
+}

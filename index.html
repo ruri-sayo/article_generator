@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Generator - 記事生成クリッカー</title>
+    <meta name="description" content="記事を生成し、悟りを目指すクリッカーゲーム。仏教観の現代的解釈をゲーム体験を通じて提示する。">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/ui.css">
+    <link rel="stylesheet" href="css/animations.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー: 統計情報表示 -->
+    <header id="game-header">
+        <div class="header-content">
+            <div class="stat-group">
+                <div class="stat-item primary">
+                    <span class="stat-label">記事</span>
+                    <span id="article-count" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">CpS</span>
+                    <span id="cps-display" class="stat-value">0</span>
+                </div>
+            </div>
+            <div class="stat-group">
+                <div class="stat-item pv-display">
+                    <span class="stat-label">PV</span>
+                    <span id="pv-count" class="stat-value">3</span>
+                </div>
+                <div class="stat-item prestige-display" id="toku-container" style="display: none;">
+                    <span class="stat-label">得</span>
+                    <span id="toku-count" class="stat-value">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main id="game-main">
+        <!-- 左サイドバー: アップグレード -->
+        <aside id="upgrades-panel" class="side-panel">
+            <h2>アップグレード</h2>
+            <div id="upgrades-list" class="panel-content">
+                <!-- アップグレードは動的に追加 -->
+                <p class="empty-message">解放されたアップグレードがありません</p>
+            </div>
+        </aside>
+
+        <!-- 中央エリア: クリック対象 -->
+        <section id="click-area">
+            <div id="click-target" role="button" tabindex="0" aria-label="記事を生成する">
+                <div class="monitor">
+                    <div class="monitor-screen">
+                        <div class="screen-content">
+                            <div class="code-line"></div>
+                            <div class="code-line short"></div>
+                            <div class="code-line"></div>
+                            <div class="code-line medium"></div>
+                            <div class="code-line short"></div>
+                        </div>
+                    </div>
+                    <div class="monitor-stand"></div>
+                </div>
+                <div class="keyboard">
+                    <div class="keyboard-keys">
+                        <div class="key-row">
+                            <span class="key"></span><span class="key"></span><span class="key"></span>
+                            <span class="key"></span><span class="key"></span><span class="key"></span>
+                            <span class="key"></span><span class="key"></span><span class="key"></span>
+                            <span class="key"></span>
+                        </div>
+                        <div class="key-row">
+                            <span class="key"></span><span class="key"></span><span class="key"></span>
+                            <span class="key"></span><span class="key"></span><span class="key"></span>
+                            <span class="key"></span><span class="key"></span><span class="key"></span>
+                        </div>
+                        <div class="key-row">
+                            <span class="key wide"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p id="click-power-display">1クリック = <span id="click-power">1</span>記事</p>
+        </section>
+
+        <!-- 右サイドバー: 施設 -->
+        <aside id="buildings-panel" class="side-panel">
+            <h2>施設</h2>
+            <div id="buildings-list" class="panel-content">
+                <!-- 施設は動的に追加 -->
+            </div>
+        </aside>
+    </main>
+
+    <!-- フッター -->
+    <footer id="game-footer">
+        <div class="footer-content">
+            <button id="save-button" class="footer-btn">💾 保存</button>
+            <button id="prestige-button" class="footer-btn prestige" style="display: none;">🌟 悟り</button>
+            <span id="auto-save-indicator">自動保存: 有効</span>
+        </div>
+    </footer>
+
+    <!-- モーダル: 転生確認 -->
+    <div id="prestige-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>悟りに達しましたか？</h2>
+            <div class="modal-body">
+                <p>現在の記事数: <span id="prestige-articles">0</span></p>
+                <p>獲得できる得: <span id="prestige-gain">0</span></p>
+                <hr>
+                <p class="warning">転生すると、記事と施設はすべてリセットされます。</p>
+                <p class="info">得は永続的に保持されます。</p>
+            </div>
+            <div class="modal-buttons">
+                <button id="prestige-confirm" class="btn-primary">転生する</button>
+                <button id="prestige-cancel" class="btn-secondary">キャンセル</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 座禅ゲージモーダル -->
+    <div id="zen-gauge-modal" class="modal zen-modal" style="display: none;">
+        <div class="zen-modal-content">
+            <h2>坐禅</h2>
+            <div class="zen-progress-bar">
+                <div id="zen-progress" class="zen-progress-fill"></div>
+            </div>
+            <p id="zen-time-display">0:00 / 1:00:00</p>
+        </div>
+    </div>
+
+    <!-- 喝！表示 -->
+    <div id="katsu-display" class="katsu" style="display: none;">喝！</div>
+
+    <!-- 通知エリア -->
+    <div id="notification-area"></div>
+
+    <!-- JavaScript -->
+    <script src="js/lib/break_infinity.min.js"></script>
+    <script src="js/utils/constants.js"></script>
+    <script src="js/utils/save.js"></script>
+    <script src="js/game/core.js"></script>
+    <script src="js/game/buildings.js"></script>
+    <script src="js/game/upgrades.js"></script>
+    <script src="js/game/prestige.js"></script>
+    <script src="js/game/zen.js"></script>
+    <script src="js/ui/display.js"></script>
+    <script src="js/ui/modal.js"></script>
+    <script src="js/ui/notifications.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
