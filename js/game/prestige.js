@@ -52,8 +52,8 @@ class PrestigeSystem {
     calculateTokuGain() {
         if (!game) return new Decimal(0);
 
-        // 得 = ∛(今回生産 / 10^15)
-        const gain = game.articlesThisRun.div(1e15).cbrt().floor();
+        // 得 = ∛(今回生産 / 10^9)
+        const gain = game.articlesThisRun.div(CONSTANTS.PRESTIGE_TOKU_BASE).cbrt().floor();
         return Decimal.max(0, gain);
     }
 

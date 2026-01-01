@@ -230,6 +230,11 @@ class GameCore {
             totalCps = totalCps.times(2);
         }
 
+        // 除夜の鐘ブースト
+        if (typeof bellEventSystem !== 'undefined' && bellEventSystem.isBoostActive()) {
+            totalCps = totalCps.times(bellEventSystem.getBoostMultiplier());
+        }
+
         return totalCps;
     }
 
@@ -371,8 +376,20 @@ class GameCore {
     checkPrestigeAvailability() {
         const prestigeButton = document.getElementById('prestige-button');
         if (prestigeButton) {
-            if (this.articlesThisRun.gte(CONSTANTS.PRESTIGE_THRESHOLD)) {
+            const canPrestige = this.articlesThisRun.gte(CONSTANTS.PRESTIGE_THRESHOLD);
+            const wasHidden = prestigeButton.style.display === 'none';
+
+            if (canPrestige) {
                 prestigeButton.style.display = 'inline-flex';
+
+                // 初めて表示される時にトースト通知
+                if (wasHidden) {
+                    notificationManager.show(
+                        '🪷 悟りを開けます',
+                        '転生の準備が整いました。「悟りを開く」ボタンをクリックしてください。',
+                        'success'
+                    );
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ class SettingsManager {
         this.settings = {
             particlesEnabled: true,
             soundEnabled: true, // 将来用
+            fallEffectEnabled: true // 記事落下エフェクト
         };
 
         this.modal = document.getElementById('settings-modal');
@@ -81,6 +82,86 @@ class SettingsManager {
                 }
             });
         }
+
+        // 記事落下エフェクト設定
+        const fallEffectToggle = document.getElementById('setting-fall-effect');
+        if (fallEffectToggle) {
+            fallEffectToggle.checked = this.settings.fallEffectEnabled !== false;
+            fallEffectToggle.addEventListener('change', (e) => {
+                this.settings.fallEffectEnabled = e.target.checked;
+                this.saveSettings();
+                if (typeof articleFallEffect !== 'undefined') {
+                    articleFallEffect.setEnabled(e.target.checked);
+                }
+            });
+        }
+
+        // データエクスポート
+        const exportBtn = document.getElementById('settings-export');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => this.exportSaveData());
+        }
+
+        // データインポート
+        const importBtn = document.getElementById('settings-import');
+        if (importBtn) {
+            importBtn.addEventListener('click', () => this.importSaveData());
+        }
+    }
+
+    /**
+     * セーブデータをエクスポート
+     */
+    exportSaveData() {
+        if (!game) return;
+
+        const exportString = saveManager.export(game);
+        if (!exportString) {
+            notificationManager.show('エラー', 'エクスポートに失敗しました', 'error');
+            return;
+        }
+
+        // クリップボードにコピー
+        navigator.clipboard.writeText(exportString).then(() => {
+            notificationManager.show(
+                '📋 エクスポート完了',
+                'セーブデータをクリップボードにコピーしました',
+                'success'
+            );
+        }).catch(() => {
+            // クリップボードが使えない場合はテキストエリアで表示
+            const textarea = document.createElement('textarea');
+            textarea.value = exportString;
+            textarea.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 200px; z-index: 9999;';
+            document.body.appendChild(textarea);
+            textarea.select();
+            alert('上記のテキストをコピーしてください。OKを押すと閉じます。');
+            document.body.removeChild(textarea);
+        });
+    }
+
+    /**
+     * セーブデータをインポート
+     */
+    importSaveData() {
+        const importString = prompt('エクスポートしたセーブデータを貼り付けてください:');
+        if (!importString) return;
+
+        const saveData = saveManager.import(importString);
+        if (!saveData) {
+            notificationManager.show('エラー', 'インポートに失敗しました。データが正しいか確認してください。', 'error');
+            return;
+        }
+
+        // 確認ダイアログ
+        if (!confirm('現在の進行状況をインポートしたデータで上書きしますか？')) {
+            return;
+        }
+
+        // LocalStorageに保存してリロード
+        localStorage.setItem(CONSTANTS.SAVE_KEY, JSON.stringify(saveData));
+        notificationManager.show('✅ インポート完了', 'ページを再読み込みします...', 'success');
+        setTimeout(() => location.reload(), 1500);
     }
 
     /**
@@ -96,6 +177,12 @@ class SettingsManager {
                 // UIへの反映
                 if (this.particlesToggle) this.particlesToggle.checked = this.settings.particlesEnabled;
                 if (this.soundToggle) this.soundToggle.checked = this.settings.soundEnabled;
+
+                // 記事落下エフェクト
+                const fallEffectToggle = document.getElementById('setting-fall-effect');
+                if (fallEffectToggle) {
+                    fallEffectToggle.checked = this.settings.fallEffectEnabled !== false;
+                }
             } catch (e) {
                 console.error('設定の読み込みに失敗:', e);
             }
@@ -116,6 +203,11 @@ class SettingsManager {
         // パーティクルの有効無効はGameCoreなどが参照する
         // グローバルにアクセス可能にするか、イベントを発火する
         window.settings = this.settings;
+
+        // 記事落下エフェクト
+        if (typeof articleFallEffect !== 'undefined') {
+            articleFallEffect.setEnabled(this.settings.fallEffectEnabled !== false);
+        }
     }
 
     /**
@@ -143,6 +235,13 @@ class SettingsManager {
      */
     isParticlesEnabled() {
         return this.settings.particlesEnabled;
+    }
+
+    /**
+     * 記事落下エフェクトが有効かどうか
+     */
+    isFallEffectEnabled() {
+        return this.settings.fallEffectEnabled !== false;
     }
 }
 

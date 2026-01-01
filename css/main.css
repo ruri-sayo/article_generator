@@ -32,7 +32,10 @@
     --font-display: 'Noto Serif JP', serif;
 
     /* サイズ */
-    --header-height: 80px;
+    /* サイズ */
+    --header-inner-height: 80px;
+    --ticker-height: 40px;
+    --header-height: calc(var(--header-inner-height) + var(--ticker-height));
     --footer-height: 50px;
     --sidebar-width: 280px;
 
@@ -83,12 +86,17 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 100;
     display: flex;
+    flex-direction: column;
+    /* 要素を縦並びに */
     align-items: center;
-    justify-content: center;
-    padding: 0 2rem;
+    justify-content: flex-start;
+    padding: 0;
+    /* paddingは内部要素へ */
 }
 
 .header-content {
+    height: var(--header-inner-height);
+    padding: 0 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -158,7 +166,8 @@ body {
 /* レスポンシブ対応 (モバイル) */
 @media (max-width: 768px) {
     :root {
-        --header-height: 60px;
+        --header-inner-height: 60px;
+        --header-height: calc(var(--header-inner-height) + var(--ticker-height));
         --sidebar-width: 100%;
         --footer-height: 0px;
         /* モバイルnavに置き換え */
@@ -497,10 +506,11 @@ body {
 
 /* フレーバーテキストティッカー */
 .flavor-ticker {
-    position: fixed;
-    top: calc(var(--header-height));
-    left: 0;
-    right: 0;
+    position: relative;
+    /* fixedから変更 */
+    top: auto;
+    left: auto;
+    right: auto;
     height: 40px;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);

@@ -431,3 +431,165 @@
 .tooltip-desc {
     color: var(--text-secondary);
 }
+
+/* ============================================
+   悟りを開くボタン（ヘッダー内）
+   ============================================ */
+.enlighten-btn {
+    background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #7c3aed 100%);
+    background-size: 200% 100%;
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: enlightenPulse 2s ease-in-out infinite, shimmer 3s linear infinite;
+    box-shadow: 0 0 15px rgba(79, 70, 229, 0.4), 0 0 30px rgba(124, 58, 237, 0.2);
+    white-space: nowrap;
+}
+
+.enlighten-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(79, 70, 229, 0.6), 0 0 50px rgba(124, 58, 237, 0.4);
+    border-color: var(--gold);
+}
+
+@keyframes enlightenPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 15px rgba(79, 70, 229, 0.4), 0 0 30px rgba(124, 58, 237, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(79, 70, 229, 0.6), 0 0 50px rgba(124, 58, 237, 0.4);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ============================================
+   除夜の鐘イベント
+   ============================================ */
+.bell-event {
+    position: fixed;
+    z-index: 800;
+    cursor: pointer;
+    animation: bellFloat 2s ease-in-out infinite;
+    transition: transform 0.2s ease;
+}
+
+.bell-event:hover {
+    transform: scale(1.2);
+}
+
+.bell-icon {
+    font-size: 3rem;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+}
+
+.bell-shine {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+    animation: bellShine 1.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes bellFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes bellShine {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 1;
+    }
+}
+
+/* 鐘ブースト表示 */
+.bell-boost-indicator {
+    position: fixed;
+    top: calc(var(--header-height) + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.9) 0%, rgba(255, 165, 0, 0.9) 100%);
+    color: #1a1a1a;
+    padding: 0.5rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: boostPulse 0.5s ease-in-out infinite alternate;
+}
+
+.boost-icon {
+    font-size: 1.2rem;
+    animation: bellRing 0.5s ease-in-out infinite alternate;
+}
+
+.boost-text {
+    font-size: 1.1rem;
+}
+
+.boost-timer {
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+@keyframes boostPulse {
+    from {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    to {
+        box-shadow: 0 0 35px rgba(255, 215, 0, 0.7), 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+@keyframes bellRing {
+    from {
+        transform: rotate(-10deg);
+    }
+
+    to {
+        transform: rotate(10deg);
+    }
+}

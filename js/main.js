@@ -9,6 +9,9 @@ function initGame() {
     console.log('Article Generator を初期化中...');
     console.log(`バージョン: ${CONSTANTS.VERSION}`);
 
+    // デバッグモードの初期化（最初に）
+    debugMode = new DebugMode();
+
     // グローバルインスタンスの初期化
     notificationManager = new NotificationManager();
     modalManager = new ModalManager();
@@ -21,6 +24,10 @@ function initGame() {
     hamburgerMenu = new HamburgerMenu();
     hamburgerMenu.init();
     pvDisplay = new PVDisplay();
+
+    // 記事落下エフェクトの初期化
+    articleFallEffect = new ArticleFallEffect();
+    articleFallEffect.setEnabled(settingsManager.isFallEffectEnabled());
 
     // ゲームコアの初期化
     game = new GameCore();
@@ -37,6 +44,9 @@ function initGame() {
 
     zenSystem = new ZenSystem();
     zenSystem.init();
+
+    // 除夜の鐘イベントシステムの初期化
+    bellEventSystem = new BellEventSystem();
 
     // PV表示の初期化
     pvDisplay.init();
@@ -112,6 +122,12 @@ const dev = {
         if (game) {
             game.addArticles(new Decimal(amount));
             console.log(`${amount} 記事を追加しました`);
+
+            // 落下エフェクト
+            if (typeof articleFallEffect !== 'undefined' && articleFallEffect.isEnabled()) {
+                const count = Math.min(Math.floor(Math.log10(amount)), 50);
+                articleFallEffect.spawnParticles(count);
+            }
         }
     },
 
@@ -172,8 +188,8 @@ const dev = {
      * 転生条件を達成（デバッグ用）
      */
     reachPrestige: function () {
-        this.addArticles(1e14);
-        console.log('転生条件（100兆記事）を達成しました');
+        this.addArticles(CONSTANTS.PRESTIGE_THRESHOLD);
+        console.log(`転生条件（${CONSTANTS.PRESTIGE_THRESHOLD}記事）を達成しました`);
     },
 
     /**

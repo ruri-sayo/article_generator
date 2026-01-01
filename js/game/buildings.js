@@ -46,20 +46,66 @@ class Building {
     }
 
     /**
-     * 施設を購入
-     * @returns {boolean} 購入成功かどうか
+     * 指定個数購入した場合の総コストを計算
+     * @param {number} count 購入個数
+     * @returns {Decimal} 総コスト
      */
-    purchase() {
-        const cost = this.getCurrentCost();
+    calculateBulkCost(count) {
+        const costMultiplier = game ? game.getCostMultiplier() : CONSTANTS.BUILDING_COST_MULTIPLIER;
+        let totalCost = new Decimal(0);
 
-        if (!game || !game.articles.gte(cost)) {
-            return false;
+        for (let i = 0; i < count; i++) {
+            const cost = this.baseCost.times(Decimal.pow(costMultiplier, this.owned + i)).floor();
+            totalCost = totalCost.plus(cost);
+        }
+
+        return totalCost;
+    }
+
+    /**
+     * 所持金で購入できる最大個数を計算
+     * @param {Decimal} articles 現在の記事数
+     * @returns {number} 最大購入可能個数
+     */
+    calculateMaxPurchasable(articles) {
+        let count = 0;
+        let spent = new Decimal(0);
+        const costMultiplier = game ? game.getCostMultiplier() : CONSTANTS.BUILDING_COST_MULTIPLIER;
+
+        while (count < 1000) { // 無限ループ防止
+            const cost = this.baseCost.times(Decimal.pow(costMultiplier, this.owned + count)).floor();
+            if (spent.plus(cost).gt(articles)) break;
+            spent = spent.plus(cost);
+            count++;
+        }
+
+        return count;
+    }
+
+    /**
+     * 施設を購入
+     * @param {number} count 購入個数（デフォルト: 1）
+     * @returns {number} 実際に購入できた個数
+     */
+    purchase(count = 1) {
+        if (!game) return 0;
+
+        if (count === 'max') {
+            count = this.calculateMaxPurchasable(game.articles);
+        }
+
+        if (count <= 0) return 0;
+
+        const cost = this.calculateBulkCost(count);
+
+        if (!game.articles.gte(cost)) {
+            return 0;
         }
 
         game.articles = game.articles.minus(cost);
-        this.owned++;
+        this.owned += count;
 
-        return true;
+        return count;
     }
 }
 
@@ -69,13 +115,56 @@ class Building {
 class BuildingsManager {
     constructor() {
         this.container = document.getElementById('buildings-list');
+        this.purchaseMode = 1; // 1, 10, 100, 'max'
+        this.modeButtons = null;
     }
 
     /**
      * 初期化
      */
     init() {
+        this.createPurchaseModeUI();
         this.renderBuildings();
+    }
+
+    /**
+     * 購入モード切り替えUIの作成
+     */
+    createPurchaseModeUI() {
+        if (!this.container) return;
+
+        const modeContainer = document.createElement('div');
+        modeContainer.className = 'purchase-mode-selector';
+        modeContainer.innerHTML = `
+            <button class="mode-btn active" data-mode="1">x1</button>
+            <button class="mode-btn" data-mode="10">x10</button>
+            <button class="mode-btn" data-mode="100">x100</button>
+            <button class="mode-btn" data-mode="max">Max</button>
+        `;
+
+        this.container.parentElement.insertBefore(modeContainer, this.container);
+
+        this.modeButtons = modeContainer.querySelectorAll('.mode-btn');
+        this.modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => this.setPurchaseMode(btn.dataset.mode));
+        });
+    }
+
+    /**
+     * 購入モードを設定
+     * @param {string|number} mode モード ('1', '10', '100', 'max')
+     */
+    setPurchaseMode(mode) {
+        this.purchaseMode = mode === 'max' ? 'max' : parseInt(mode);
+
+        // ボタンのアクティブ状態を更新
+        if (this.modeButtons) {
+            this.modeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode == mode);
+            });
+        }
+
+        this.updateDisplay();
     }
 
     /**
@@ -102,17 +191,26 @@ class BuildingsManager {
         card.className = 'building-card';
         card.dataset.buildingId = building.id;
 
-        const canAfford = game && building.canAfford(game.articles);
+        // 購入個数と総コストを計算
+        let buyCount = this.purchaseMode === 'max'
+            ? building.calculateMaxPurchasable(game.articles)
+            : this.purchaseMode;
+
+        const cost = this.purchaseMode === 1
+            ? building.getCurrentCost()
+            : building.calculateBulkCost(buyCount);
+
+        const canAfford = game && game.articles.gte(cost) && buyCount > 0;
         if (canAfford) {
             card.classList.add('affordable');
         }
 
-        const cost = building.getCurrentCost();
         const cps = building.getCps(game ? game.getUpgradeMultiplier(building.id) : 1);
+        const buyLabel = this.purchaseMode === 1 ? '' : ` (x${buyCount})`;
 
         card.innerHTML = `
             <div class="building-header">
-                <span class="building-name">${building.name}</span>
+                <span class="building-name">${building.name}${buyLabel}</span>
                 <span class="building-owned">${building.owned}</span>
             </div>
             <div class="building-stats">
@@ -142,7 +240,9 @@ class BuildingsManager {
         const building = game.buildings[buildingId];
         if (!building) return;
 
-        if (building.purchase()) {
+        const purchasedCount = building.purchase(this.purchaseMode);
+
+        if (purchasedCount > 0) {
             // 購入成功
             this.updateDisplay();
 
@@ -185,9 +285,27 @@ class BuildingsManager {
             const building = game.buildings[buildingId];
             if (!building) return;
 
+            // 購入個数と総コストを計算
+            let buyCount = this.purchaseMode === 'max'
+                ? building.calculateMaxPurchasable(game.articles)
+                : this.purchaseMode;
+
+            const cost = this.purchaseMode === 1
+                ? building.getCurrentCost()
+                : building.calculateBulkCost(buyCount);
+
+            const canAfford = game.articles.gte(cost) && buyCount > 0;
+
             // 購入可能状態の更新
-            const canAfford = building.canAfford(game.articles);
             card.classList.toggle('affordable', canAfford);
+
+            // 名前の更新（購入個数表示）
+            const nameSpan = card.querySelector('.building-name');
+            const buyLabel = this.purchaseMode === 1 ? '' : ` (x${buyCount})`;
+            if (nameSpan) {
+                const baseName = BUILDINGS_DATA[buildingId].name;
+                nameSpan.textContent = baseName + buyLabel;
+            }
 
             // 所有数の更新
             const ownedSpan = card.querySelector('.building-owned');
@@ -205,7 +323,6 @@ class BuildingsManager {
             // コストの更新
             const costSpan = card.querySelector('.building-cost');
             if (costSpan) {
-                const cost = building.getCurrentCost();
                 costSpan.textContent = '📄 ' + formatNumber(cost);
                 costSpan.classList.toggle('affordable', canAfford);
                 costSpan.classList.toggle('expensive', !canAfford);

@@ -16,8 +16,16 @@ const CONSTANTS = {
     // ゲームループ
     TICK_RATE: 60, // FPS
 
-    // 転生条件
-    PRESTIGE_THRESHOLD: 1e14, // 100兆
+    // 転生条件（弥勒菩薩の出現年：56億7000万年にちなむ）
+    PRESTIGE_THRESHOLD: 5.67e9, // 56億7000万
+    PRESTIGE_TOKU_BASE: 1e9, // 得計算の基準値
+
+    // 除夜の鐘イベント
+    BELL_MIN_INTERVAL: 60, // 最小出現間隔（秒）
+    BELL_MAX_INTERVAL: 180, // 最大出現間隔（秒）
+    BELL_DURATION: 15, // 鐘の表示時間（秒）
+    BELL_BOOST_DURATION: 30, // ブースト持続時間（秒）
+    BELL_BOOST_MULTIPLIER: 108, // CpS倍率（煩悩の数）
 
     // 座禅システム
     ZEN_START_TIME: 30, // 無操作30秒で座禅準備（カウントダウン）開始
@@ -214,7 +222,7 @@ const UPGRADES_DATA = [
     { id: "agi_500", buildingId: 5, requiredCount: 500, name: "全知全能", flavor: "書くまでもなく、すべてを知っている" },
 
     // 虚空からの抽出
-    { id: "void_10", buildingId: 6, requiredCount: 10, name: "奇跡的で致命的なマイノリティ化", flavor: "I can fly high!" },
+    { id: "void_10", buildingId: 6, requiredCount: 10, name: "虚空を再定義", flavor: "定義は解析の第一歩" },
     { id: "void_20", buildingId: 6, requiredCount: 20, name: "アカシックAPI", flavor: "宇宙的なRESTfulエンドポイント" },
     { id: "void_30", buildingId: 6, requiredCount: 30, name: "夢日記の解析", flavor: "眠りの中に真実がある" },
     { id: "void_50", buildingId: 6, requiredCount: 50, name: "前世の記憶へのアクセス", flavor: "輪廻をデバッグログとして読む" },
